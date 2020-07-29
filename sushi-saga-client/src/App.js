@@ -9,7 +9,9 @@ class App extends Component {
 
   state = {
     sushis: [],
-    table: []
+    selectionIndex: 0,
+    eaten: [],
+    wallet: 100
   }
 
   componentDidMount() {
@@ -18,17 +20,40 @@ class App extends Component {
       .then(json => this.setState({sushis: json}))
   }
 
+  // Set new money. Check that new sushi being eaten can be paid for
+  // Add sushi to this.state.eaten
   eatSushi = (sushi) => {
+    const newMoney = this.state.wallet - sushi.price
+
+    if (newMoney > 0) {
+      this.setState((prevState) => {
+        return {
+          eaten: [...prevState.eaten, sushi],
+          wallet: newMoney
+        }
+      })
+    }
+  }
+
+  more = () => {
     this.setState((prevState) => {
-      return {table: prevState.table, sushi}
+      return {selectionIndex: prevState.selectionIndex + 4}
     })
+
+    if (this.state.selectionIndex + 4 === this.state.sushis.length) {
+      this.setState({selectionIndex: 0})
+    }
+  }
+
+  selectFourSushis = () => {
+    return this.state.sushis.slice(this.state.selectionIndex, this.state.selectionIndex + 4)
   }
 
   render() {
     return (
       <div className="app">
-        <SushiContainer sushis={this.state.sushis} eatSushi={this.eatSushi}/>
-        <Table table={this.state.table} />
+        <SushiContainer eaten={this.state.eaten} selectedSushis={this.selectFourSushis()} more={this.more} eatSushi={this.eatSushi}/>
+        <Table eaten={this.state.eaten} money={this.state.wallet}/>
       </div>
     );
   }

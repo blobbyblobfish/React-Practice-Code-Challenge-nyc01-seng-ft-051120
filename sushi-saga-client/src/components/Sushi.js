@@ -2,12 +2,15 @@ import React, { Fragment } from 'react'
 
 const Sushi = (props) => {
 
+  const eatSushi = () => {
+    props.eatSushi(props.sushi)
+  }
+
   return (
     <div className="sushi">
-      <div className="plate" onClick={props.eatSushi}>
+      <div className="plate" onClick={eatSushi}>
         { 
-          /* Tell me if this sushi has been eaten! */ 
-          false ?
+          props.eaten.includes(props.sushi) ?
             null
           :
             <img src={props.sushi.img_url} width="100%" />
